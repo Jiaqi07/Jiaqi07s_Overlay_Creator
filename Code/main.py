@@ -1,4 +1,4 @@
-from PIL import Image, ImageOps
+from PIL import Image, ImageOps, ImageFilter
 
 DEFAULT_IMG = Image.open('images/Default.jpg')  # Any Size just plug into Cube The Square (Future replicate it)
 # Default Images - 2048x2048 each image
@@ -15,6 +15,10 @@ TRANSITIONOVERLAY = Image.open('images/TRANSITIONOVERLAY.png')
 
 def show(file_image):
     file_image.show()
+
+
+def smooth(file_image):
+    return file_image.filter(ImageFilter.SMOOTH)
 
 
 def get_file():
@@ -41,19 +45,27 @@ def start_overlay():
     Transition.paste(DEFAULT_TOP, (0, 0))
     Transition.paste(DEFAULT_FRONT, (0, 2048))
     Transition.paste(DEFAULT_BOTTOM, (0, 4096))
+    Transition.show()
     # Part 2
-    TransCrop = Transition.copy().crop((0, 0, 1024, 6144))
-    TransInvert = ImageOps.mirror(TransCrop)
-    TransInvert.show()
+
+    Sky = Transition.copy().filter(ImageFilter.GaussianBlur())
+
+    # TransCrop = Transition.copy().crop((0, 0, 1024, 6144))
+    # TransInvert = ImageOps.mirror(TransCrop)
+    # Transition.paste(TransInvert, (1024, 0))
 
     # 1. Crop image to half - Yes
     # 2. Create horizontal inversion - Yes
-    # 3. Paste
-    # 4. Blend Middle
+    # 3. Paste - Yes
+    # 4. Blend Middle (Gaussian Blur) - Not Finished
 
+    Sky.paste(Transition.copy().crop((0, 0, 2048, 2048)), (2048, 0))
+    Sky.paste(Transition.copy().crop((0, 2048, 2048, 4096)), (2048, 2048))
+    Sky.paste(Transition.copy().crop((0, 4096, 2048, 6144)), (0, 0))
 
-    # Transition.show()
-    # Sky.show()
+    Sky.show()
+
+    # Sky.save('D:\starfield031.png')
 
 
 if __name__ == '__main__':
